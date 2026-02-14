@@ -23,7 +23,8 @@ dependencies = [
   "scvelo == 0.3.3",
   "moscot == 0.4.3",
   "torch ~= 2.8.0",
-  "torchvision ~= 0.23.0"
+  "torchvision ~= 0.23.0",
+  "requests"
 ]
 
 [project.optional-dependencies]
@@ -131,7 +132,8 @@ strict = [
   "wot == 1.0.8.post2",
   "wrapt == 1.17.3",
   "zarr == 3.1.1",
-  "zipp == 3.23.0"
+  "zipp == 3.23.0",
+  "requests == 2.32.5"
 ]
 docs = [
   "sphinx == 7.3.7",

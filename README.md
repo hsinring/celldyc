@@ -1,7 +1,10 @@
-**CellDyc** is a novel semi-supervised learning framework designed to reconstruct transcriptomic velocities and recover intrinsic *gene-embedded time* by leveraging experimental time-point supervision.
+## CellDyc - Experimental Time Points Guided Transcriptomic Velocity Inference 
+
 <p align="center">
   <img src="docs/_static/index_3.png" alt="CellDyc overview">
 </p>
+
+**CellDyc** is a novel semi-supervised learning framework designed to reconstruct transcriptomic velocities and recover intrinsic *gene-embedded time* by leveraging experimental time-point supervision.
 
 ## Key Highlights
 - **Data-driven velocity inference**: Robust, data-centric reconstruction of transcriptomic velocities.
