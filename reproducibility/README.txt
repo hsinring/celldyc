@@ -1,0 +1,2 @@
+This code is used to reproduce the experimental results presented in the paper.
+To reproduce CellDyc's comparisons with other methods, please install the Python packages `cellrank`, `wot`, and `moscot`.
