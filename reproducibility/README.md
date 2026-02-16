@@ -1,2 +1,0 @@
-This set of reproduction code is used to obtain the experimental results presented in the paper. 
-To reproduce the comparisons with other methods, you need to install the corresponding Python packages, including cellrank and wot.
