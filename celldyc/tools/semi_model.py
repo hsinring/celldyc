@@ -26,7 +26,6 @@ def set_seed(seed: int = 42):
 
 
 class Clock(nn.Module):
-    """q(z|idx)"""
 
     def __init__(self, n_in: int):
         super().__init__()
@@ -38,7 +37,6 @@ class Clock(nn.Module):
 
 
 class Embedding(nn.Module):
-    """q(z|idx)"""
 
     def __init__(self, n_in: int, n_lat: int):
         super().__init__()
@@ -50,7 +48,6 @@ class Embedding(nn.Module):
 
 
 class Decoder(nn.Module):
-    """Decoder outputs pi, rho, tau (same structure for compatibility)."""
 
     def __init__(self, n_lat: int, n_genes: int):
         super().__init__()
@@ -70,7 +67,6 @@ class Decoder(nn.Module):
 
 
 class semi_model(nn.Module):
-    """ """
 
     def __init__(self, n_genes: int, n_lat: int = 10):
         super().__init__()
