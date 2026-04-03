@@ -24,7 +24,7 @@ dependencies = [
   "moscot == 0.4.3",
   "torch ~= 2.8.0",
   "torchvision ~= 0.23.0",
-  "requests"，
+  "requests",
   "uvloop; sys_platform != 'win32'"
 ]
 
