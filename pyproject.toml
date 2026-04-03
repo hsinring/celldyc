@@ -17,7 +17,7 @@ classifiers = [
 ]
 dependencies = [
   "adjusttext ~= 1.3.0",
-  "ipykernel ~= 7.1.0",
+  "ipykernel ~= 6.29.0",
   "ipywidgets ~= 8.1.8",
   "ott-jax == 0.5.1",
   "scvelo == 0.3.3",
@@ -56,7 +56,7 @@ strict = [
   "h5py == 3.14.0",
   "humanize == 4.13.0",
   "importlib-resources == 6.5.2",
-  "ipykernel == 7.1.0",
+  "ipykernel == 6.29.0",
   "ipywidgets == 8.1.8",
   "jax == 0.7.1",
   "jaxlib == 0.7.1",
