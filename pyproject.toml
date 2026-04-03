@@ -21,11 +21,9 @@ dependencies = [
   "ipywidgets ~= 8.1.8",
   "ott-jax == 0.5.1",
   "scvelo == 0.3.3",
-  "moscot == 0.4.3",
   "torch ~= 2.8.0",
   "torchvision ~= 0.23.0",
-  "requests",
-  "uvloop; sys_platform != 'win32'"
+  "requests"
 ]
 
 [project.optional-dependencies]
