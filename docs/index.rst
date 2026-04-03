@@ -68,6 +68,5 @@ Welcome to CellDyc
    Quick Start<quick_start>
    Recover Transcriptomic Velocity<recover_transcriptomic_velocity>
    Recover Masked Time Points<recover_masked_time_points>
-   Gene-Specific Velocity Dynamics<gene_specific_velocity_dynamics>
    Handling Zman-seq Timestamps<handling_timestamps>
 

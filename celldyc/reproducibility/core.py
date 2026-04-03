@@ -199,49 +199,6 @@ def analyze_gene_contributions(
     return results_df
 
 
-def getime_contrib(adata: AnnData, layer: Optional[str] = None) -> AnnData:
-    if "getime_weights" not in adata.var.columns:
-        raise ValueError("Column 'getime_weights' not found in adata.var")
-
-    # Get expression matrix
-    if layer and layer in adata.layers:
-        X = adata.layers[layer]
-    else:
-        X = adata.X
-
-    if X is None:
-        raise ValueError("No expression matrix found in adata")
-
-    getime_weights = adata.var["getime_weights"].values
-
-    # Convert to array if sparse
-    if hasattr(X, "toarray"):
-        X_array = X.toarray()
-    else:
-        X_array = X
-
-    origin_getime = X_array.dot(getime_weights)
-    contributions = X_array * getime_weights
-
-    pert_clock = origin_getime[:, np.newaxis] - contributions
-
-    # Normalize to [0, 1]
-    origin_norm = (origin_getime - origin_getime.min()) / (
-        origin_getime.max() - origin_getime.min()
-    )
-    pert_norm = (pert_clock - pert_clock.min()) / (pert_clock.max() - pert_clock.min())
-
-    gene_avg = np.linalg.norm(origin_norm[:, np.newaxis] - pert_norm, axis=0)
-    gene_avg = (gene_avg - gene_avg.min()) / (gene_avg.max() - gene_avg.min())
-
-    gene_peak = np.abs(origin_norm[:, np.newaxis] - pert_norm).max(axis=0)
-    gene_peak = (gene_peak - gene_peak.min()) / (gene_peak.max() - gene_peak.min())
-
-    adata.var["avg_contribution"] = gene_avg
-    adata.var["peak_contribution"] = gene_peak
-
-    return adata
-
 
 def getime_violin_mono2tam(
     adata: AnnData,
@@ -893,56 +850,6 @@ def plot_gene_density(
     plt.show()
 
 
-def thresh_highlight_genes(
-    adata: AnnData,
-    avg_thresh: float = 0.12,
-    peak_thresh: float = 0.13,
-    save_path: str = None,
-    figsize: Tuple[int, int] = (5, 5),
-) -> np.ndarray:
-    if "avg_contribution" not in adata.var.columns:
-        raise ValueError("Column 'avg_contribution' not found in adata.var")
-    if "peak_contribution" not in adata.var.columns:
-        raise ValueError("Column 'peak_contribution' not found in adata.var")
-
-    plt.rcParams["xtick.labelsize"] = 12
-    plt.rcParams["ytick.labelsize"] = 12
-    mask = (adata.var["avg_contribution"] > avg_thresh) & (
-        adata.var["peak_contribution"] > peak_thresh
-    )
-
-    fig, ax = plt.subplots(figsize=figsize)
-
-    ax.scatter(
-        adata.var["avg_contribution"],
-        adata.var["peak_contribution"],
-        c="gray",
-        alpha=0.6,
-        s=15,
-    )
-
-    ax.scatter(
-        adata.var.loc[mask, "avg_contribution"],
-        adata.var.loc[mask, "peak_contribution"],
-        c="red",
-        s=15,
-    )
-
-    ax.axvline(x=avg_thresh, color="black", linestyle="--", linewidth=1.5)
-    ax.axhline(y=peak_thresh, color="black", linestyle="--", linewidth=1.5)
-    ax.tick_params(axis="both", labelsize=12)
-
-    ax.set_xlabel("Average contribution", fontsize=14)
-    ax.set_ylabel("Peak contribution", fontsize=14)
-    # ax.set_title("Gene Contribution Metrics",fontsize=13)
-
-    plt.tight_layout()
-    if save_path is not None:
-        plt.savefig(save_path, dpi=300, bbox_inches="tight", pad_inches=0)
-    plt.show()
-
-    return mask
-
 
 def plot_fateprobabilities(
     adata: AnnData,
@@ -1403,67 +1310,6 @@ def macrostates_violin(
     return fig, ax
 
 
-def plot_getime_correlation(
-    adata: AnnData,
-    time_key: str = "getime",
-    remake_key: str = "remake_getime",
-    color_key: str = "celltype",
-    figsize: Tuple[int, int] = (4, 4),
-) -> float:
-    if time_key not in adata.obs.columns:
-        raise ValueError(f"Column '{time_key}' not found in adata.obs")
-    if remake_key not in adata.obs.columns:
-        raise ValueError(f"Column '{remake_key}' not found in adata.obs")
-
-    correlation, p_value = stats.pearsonr(adata.obs[time_key], adata.obs[remake_key])
-
-    fig, ax = plt.subplots(figsize=figsize)
-
-    palette = None
-    if color_key in adata.uns and f"{color_key}_colors" in adata.uns:
-        palette = adata.uns[f"{color_key}_colors"]
-
-    sc.pl.scatter(
-        adata,
-        x=time_key,
-        y=remake_key,
-        color=color_key,
-        title="",
-        show=False,
-        legend_loc="none",
-        palette=palette,
-        ax=ax,
-    )
-
-    if p_value == 0.0 or p_value < 1e-16:
-        p_txt = r"$< 10^{-16}$"
-    elif p_value < 1e-3:
-        p_txt = rf"$= 10^{{{int(np.floor(np.log10(p_value)))}}}$"
-    elif p_value >= 0.999:
-        p_txt = r"$= 1.00$"
-    elif p_value < 0.1:
-        p_txt = rf"$= {p_value:.3f}$"
-    else:
-        p_txt = rf"$= {p_value:.2f}$"
-
-    ax.text(
-        0.05,
-        0.95,
-        rf"Pearson $r={correlation:.2f}$" + "\n" + rf"$p$-value {p_txt}",
-        transform=ax.transAxes,
-        fontsize=17,
-        verticalalignment="top",
-    )
-    ax.tick_params(axis="both", labelsize=17)
-
-    plt.ylabel("Reconstructed \n gene-embedded time", fontsize=18)
-    plt.xlabel("Gene-embedded time", fontsize=18)
-    plt.tight_layout()
-    plt.show()
-
-    return correlation
-
-
 def batch_velocity_dynamics(
     adata: AnnData,
     gene_list: List[str],
@@ -1860,3 +1706,56 @@ def reduce_timepoint(
     sc.pp.neighbors(adata_filtered, n_neighbors=30, n_pcs=30)
 
     return adata_filtered
+
+def boxplot(adata, y="velocity_abs_mean", groupby="celltype", figsize=(3,2.2), show=True, fontsize=10, ylabel=None,title=None):
+    
+    fig, ax = plt.subplots(figsize=figsize)
+    
+    if f"{groupby}_colors" in adata.uns:
+        palette = adata.uns[f"{groupby}_colors"]
+    else:
+        palette = "tab10"
+    
+    sns.boxplot(
+        data=adata.obs,
+        x=groupby,
+        y=y,
+        width=0.3,
+        palette=palette,
+        ax=ax,
+        fliersize=1.5
+    )
+    
+    ax.set_xticks([])
+    ax.set_xlabel("")
+    
+    if ylabel is not None:
+        ax.set_ylabel(ylabel, fontsize=fontsize)
+    else:
+        ax.set_ylabel(y, fontsize=fontsize)
+    
+    if title is not None:
+        ax.set_title(title,fontsize=fontsize)
+    
+    ax.tick_params(axis='y', labelsize=fontsize-1)
+    
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+    
+    xmin, xmax = ax.get_xlim()
+    ymin, ymax = ax.get_ylim()
+
+    x_extend = (xmax - xmin) * 0.01
+    y_extend = (ymax - ymin) * 0.01
+    y_arrow_max = ymax + (ymax - ymin) * 0.15
+    
+    ax.annotate('', xy=(xmax, ymin), xycoords='data', xytext=(xmin- x_extend, ymin),
+                arrowprops=dict(arrowstyle='->', color='black', lw=1))
+    ax.annotate('', xy=(xmin, y_arrow_max), xycoords='data', xytext=(xmin, ymin-y_extend),
+                arrowprops=dict(arrowstyle='->', color='black', lw=1))
+    ax.set_ylim(ymin - y_extend, ymax + (ymax - ymin) * 0.15)
+    
+    plt.tight_layout()
+    if show:
+        plt.show()
+    return ax
