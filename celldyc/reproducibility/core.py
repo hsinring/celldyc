@@ -10,7 +10,7 @@ from anndata import AnnData
 from scipy import stats
 from celldyc.tools.utils import calculate_gene_avg
 from celldyc.plotting.utils import calculate_ovl
-from celldyc.plotting.core import velocity_dynamics, velocity_hot
+from celldyc.plotting.core import velocity_hot
 
 
 def sample_along_time(
