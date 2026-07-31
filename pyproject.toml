@@ -1,7 +1,11 @@
 [build-system]
 requires =["setuptools>=61", "wheel"]
-build-backend = "setuptools.build_meta"[tool.setuptools.packages.find]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
 include = ["celldyc*"]
+exclude = ["data*", "reproducibility*"]
+
 [project]
 name = "celldyc"
 version = "0.0.8"
@@ -21,13 +25,12 @@ dependencies =[
   "torch ~= 2.8.0",
   "torchvision ~= 0.23.0",
   "requests"
-][project.optional-dependencies]
+]
+
+[project.optional-dependencies]
 docs =[
   "sphinx == 7.3.7",
   "myst_nb == 1.3.0",
   "sphinx_rtd_theme == 3.0.2",
   "sphinx-design>=0.6.0"
 ]
-[tool.setuptools.packages.find]
-include = ["celldyc*"]
-exclude = ["data*", "reproducibility*"]
